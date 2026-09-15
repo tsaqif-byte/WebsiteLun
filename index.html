@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kuislun</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+
+            background: linear-gradient(
+                135deg,
+                #6a5acd,
+                #00bfff,
+                #00e6a8,
+                #ff69b4
+            );
+
+            background-size: 400% 400%;
+            animation: backgroundMove 10s ease infinite;
+            min-height: 100vh;
+        }
+
+        @keyframes backgroundMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 40px 20px;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .active {
+            display: flex;
+            animation: pageIn 0.5s ease;
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 25px;
+            width: min(90%, 600px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        h1 {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 30px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        button {
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.08);
+        }
+
+        button:active {
+            transform: scale(0.88);
+        }
+
+        .start {
+            background: #ffd700;
+            color: #333;
+            font-size: 22px;
+            padding: 18px 40px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(255, 215, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+            }
+        }
+
+        .answer {
+            display: block;
+            width: 90%;
+            max-width: 400px;
+            margin: 12px auto;
+            background: white;
+            color: #333;
+        }
+
+        .answer:hover {
+            background: #ffe66d;
+        }
+
+        .quiz-image {
+            width: 100%;
+            max-width: 400px;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 20px;
+            margin: 20px 0;
+            background: white;
+            padding: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        input {
+            padding: 15px;
+            width: 80%;
+            max-width: 350px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+        }
+
+        .leaderboard {
+            margin-top: 20px;
+        }
+
+        .player {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            margin: 10px;
+            border-radius: 15px;
+            font-size: 18px;
+        }
+
+        .correct {
+            background: #2ecc71 !important;
+            color: white !important;
+        }
+
+        .wrong {
+            background: #e74c3c !important;
+            color: white !important;
+        }
+
+        .score {
+            font-size: 22px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HALAMAN AWAL -->
+    <div id="home" class="page active">
+
+        <div class="box">
+
+            <h1>Tes PengetahuanLun</h1>
+
+            <p>
+                Seberapa jauh pengetahuanlun mu!
+            </p>
+
+            <p>
+                KarnaLun punya 2 anakcing,jadi soalnya cuman 2!
+            </p>
+
+            <button class="start" onclick="mulaiKuis()">
+                🚀 MULAI KUISLUN!
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- SOAL -->
+    <div id="quiz" class="page">
+
+        <div class="box">
+
+            <h2 id="nomorSoal">
+                Soalun 1 dari 2
+            </h2>
+
+            <img id="gambarSoal"
+                 class="quiz-image"
+                 src="nln.jpg">
+
+            <h2>
+                Ini Gambar Apalun?
+            </h2>
+
+            <button class="answer" onclick="jawab(0)">
+                Jawaban A
+            </button>
+
+            <button class="answer" onclick="jawab(1)">
+                Jawaban B
+            </button>
+
+            <button class="answer" onclick="jawab(2)">
+                Jawaban C
+            </button>
+
+            <button class="answer" onclick="jawab(3)">
+                Jawaban D
+            </button>
+
+            <p class="score">
+                ⭐ Skor: <span id="skor">0</span>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ISI NAMA -->
+    <div id="namePage" class="page">
+
+        <div class="box">
+
+            <h1>🎉 KuisLun Selesai!</h1>
+
+            <p>
+                Skor kamu:
+            </p>
+
+            <h1 id="finalScore">
+                0
+            </h1>
+
+            <p>
+                Masukkan namaLun kamu untuk masuk leaderboard.
+            </p>
+
+            <input
+                type="text"
+                id="nama"
+                placeholder="Masukkan nama..."
+            >
+
+            <br><br>
+
+            <button class="start" onclick="simpanNama()">
+                🏆 Lihat LeaderCing
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- LEADERBOARD -->
+    <div id="leaderboardPage" class="page">
+
+        <div class="box">
+
+            <h1>🏆 Leaderboard</h1>
+
+            <p>
+                Orang Nilai Terbaik MenurutLun!
+            </p>
+
+            <div id="leaderboard"
+                 class="leaderboard">
+            </div>
+
+            <button onclick="ulangKuis()">
+                🔄 Main Lacing?
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // =========================
+        // DATA KUIS
+        // =========================
+
+        let soal = 0;
+        let skor = 0;
+
+        /*
+        GANTI bagian ini sesuai gambar dan jawabanmu.
+
+        Contoh:
+        jawabanBenar: 0
+        berarti Jawaban A benar.
+
+        0 = A
+        1 = B
+        2 = C
+        3 = D
+        */
+
+        const dataSoal = [
+
+            {
+                gambar: "nln.jpg",
+                jawaban: [ 
+                    "Cuking Mambo",
+                    "Cuking Nalun",
+                    "Cuking Ple",
+                    "Cuking Dudul"
+                ],
+                jawabanBenar: 1
+            },
+
+            {
+                gambar: "mati.jpg",
+                jawaban: [
+                    "Cuking Salto",
+                    "Cuking Chikaheo",
+                    "Cuking Nakal",
+                    "Cuking Reo"
+                ],
+                jawabanBenar: 3
+            }
+
+        ];
+
+
+        // =========================
+        // PINDAH HALAMAN
+        // =========================
+
+        function pindahHalaman(id) {
+
+            document.querySelectorAll(".page")
+                .forEach(page => {
+                    page.classList.remove("active");
+                });
+
+            document.getElementById(id)
+                .classList.add("active");
+        }
+
+
+        // =========================
+        // MULAI KUIS
+        // =========================
+
+        function mulaiKuis() {
+
+            soal = 0;
+            skor = 0;
+
+            document.getElementById("skor")
+                .textContent = skor;
+
+            tampilkanSoal();
+
+            pindahHalaman("quiz");
+        }
+
+
+        // =========================
+        // TAMPILKAN SOAL
+        // =========================
+
+        function tampilkanSoal() {
+
+            const data = dataSoal[soal];
+
+            document.getElementById("nomorSoal")
+                .textContent =
+                "Soal " + (soal + 1) + " dari 2";
+
+            document.getElementById("gambarSoal")
+                .src = data.gambar;
+
+            const tombol =
+                document.querySelectorAll(".answer");
+
+            tombol.forEach((button, index) => {
+
+                button.textContent =
+                    data.jawaban[index];
+
+                button.classList.remove("correct");
+                button.classList.remove("wrong");
+
+                button.disabled = false;
+
+            });
+        }
+
+
+        // =========================
+        // JAWAB SOAL
+        // =========================
+
+        function jawab(pilihan) {
+
+            const data = dataSoal[soal];
+
+            const tombol =
+                document.querySelectorAll(".answer");
+
+            tombol.forEach(button => {
+                button.disabled = true;
+            });
+
+
+            if (pilihan === data.jawabanBenar) {
+
+                skor++;
+
+                tombol[pilihan]
+                    .classList.add("correct");
+
+            } else {
+
+                tombol[pilihan]
+                    .classList.add("wrong");
+
+                tombol[data.jawabanBenar]
+                    .classList.add("correct");
+            }
+
+
+            document.getElementById("skor")
+                .textContent = skor;
+
+
+            setTimeout(() => {
+
+                soal++;
+
+                if (soal < 2) {
+
+                    tampilkanSoal();
+
+                } else {
+
+                    document.getElementById("finalScore")
+                        .textContent =
+                        skor + " / 2";
+
+                    pindahHalaman("namePage");
+                }
+
+            }, 1000);
+        }
+
+
+        // =========================
+        // SIMPAN NAMA
+        // =========================
+
+        function simpanNama() {
+
+            let nama =
+                document.getElementById("nama")
+                .value
+                .trim();
+
+            if (nama === "") {
+
+                alert("Masukkan nama terlebih dahulu!");
+
+                return;
+            }
+
+
+            let leaderboard =
+                JSON.parse(
+                    localStorage.getItem("leaderboard")
+                ) || [];
+
+
+            leaderboard.push({
+
+                nama: nama,
+
+                skor: skor
+
+            });
+
+
+            leaderboard.sort(
+                (a, b) => b.skor - a.skor
+            );
+
+
+            leaderboard =
+                leaderboard.slice(0, 10);
+
+
+            localStorage.setItem(
+                "leaderboard",
+                JSON.stringify(leaderboard)
+            );
+
+
+            tampilkanLeaderboard();
+        }
+
+
+        // =========================
+        // LEADERBOARD
+        // =========================
+
+        function tampilkanLeaderboard() {
+
+            const tempat =
+                document.getElementById("leaderboard");
+
+            tempat.innerHTML = "";
+
+
+            let leaderboard =
+                JSON.parse(
+                    localStorage.getItem("leaderboard")
+                ) || [];
+
+
+            if (leaderboard.length === 0) {
+
+                tempat.innerHTML =
+                    "<p>Belum ada pemain.</p>";
+
+                return;
+            }
+
+
+            leaderboard.forEach((player, index) => {
+
+                let medal = "";
+
+                if (index === 0) {
+                    medal = "🥇";
+                }
+
+                else if (index === 1) {
+                    medal = "🥈";
+                }
+
+                else if (index === 2) {
+                    medal = "🥉";
+                }
+
+
+                tempat.innerHTML += `
+
+                    <div class="player">
+
+                        ${medal}
+                        <strong>
+                            ${index + 1}.
+                            ${player.nama}
+                        </strong>
+
+                        — ${player.skor} / 2
+
+                    </div>
+
+                `;
+
+            });
+
+
+            pindahHalaman("leaderboardPage");
+        }
+
+
+        // =========================
+        // MAIN LAGI
+        // =========================
+
+        function ulangKuis() {
+
+            document.getElementById("nama")
+                .value = "";
+
+            mulaiKuis();
+        }
+
+    </script>
+
+</body>
+</html>
